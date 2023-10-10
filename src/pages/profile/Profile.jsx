@@ -3,8 +3,22 @@ import Topbar from "../../components/topbar/Topbar";
 import "./profile.css";
 import Rightbar from "../../components/rightbar/Rightbar";
 import Feed from "../../components/feed/Feed";
+import userProfilePlaceholder from "../../assets/userprofile.svg";
+import userCoverPlaceholder from "../../assets/noCover.png";
+import { useEffect, useState } from "react";
+import clientApi from "../../network/network";
+import { useParams } from "react-router";
 
 const Profile = () => {
+    const [user, setUser] = useState({});
+    const params = useParams();
+    useEffect(() => {
+        const fetchUser = async () => {
+            const res = await clientApi.get(`/users?username=${params.username}`);
+            setUser(res.data);
+        };
+        fetchUser();
+    }, []);
     return (
         <>
             <Topbar />
@@ -14,24 +28,24 @@ const Profile = () => {
                     <div className="profileRightTop">
                         <div className="profileCover">
                             <img
-                                src="https://scontent.fdel7-2.fna.fbcdn.net/v/t39.30808-6/373564750_139389795900291_3307263555332156428_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=9FehbAvQatgAX-q4gWi&_nc_ht=scontent.fdel7-2.fna&oh=00_AfDHSchzLcuK5eb45An3TdzhAvj5l7CHRHvAQtpHnGHIJQ&oe=6527A916"
+                                src={user.coverPicture || userCoverPlaceholder}
                                 alt="cover"
                                 className="profileCoverImg"
                             />
                             <img
-                                src="https://scontent.fdel7-2.fna.fbcdn.net/v/t39.30808-6/373564750_139389795900291_3307263555332156428_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=9FehbAvQatgAX-q4gWi&_nc_ht=scontent.fdel7-2.fna&oh=00_AfDHSchzLcuK5eb45An3TdzhAvj5l7CHRHvAQtpHnGHIJQ&oe=6527A916"
+                                src={user.profilePicture || userProfilePlaceholder}
                                 alt="profile"
                                 className="profileUserImg"
                             />
                         </div>
                         <div className="profileInfo">
-                            <h4 className="profileInfoName">Username</h4>
-                            <p className="profileInfoDesc">This is a temporory description</p>
+                            <h4 className="profileInfoName">{user.username}</h4>
+                            <p className="profileInfoDesc">{user.description}</p>
                         </div>
                     </div>
                     <div className="profileRightBottom">
-                        <Feed profile />
-                        <Rightbar profile />
+                        <Feed username={params.username} />
+                        <Rightbar user={user} />
                     </div>
                 </div>
             </div>

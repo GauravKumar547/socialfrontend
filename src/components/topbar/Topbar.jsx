@@ -1,11 +1,14 @@
 import { Chat, Notifications, Person, Search } from "@mui/icons-material";
 import "./topbar.css";
 import userProfilePlaceholder from "../../assets/userprofile.svg";
+import { Link } from "react-router-dom";
 const Topbar = () => {
     return (
         <div className="topbarContainer">
             <div className="topbarLeft">
-                <span className="logo">Socialize</span>
+                <Link to="/" className="logo">
+                    Socialize
+                </Link>
             </div>
             <div className="topbarCenter">
                 <div className="searchbar">

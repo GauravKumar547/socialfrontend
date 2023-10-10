@@ -3,16 +3,21 @@ import userProfilePlaceholder from "../../assets/userprofile.svg";
 import likeImg from "../../assets/like.png";
 import heartImg from "../../assets/heart.png";
 import { MoreVert } from "@mui/icons-material";
-import { Users } from "../../dummyData";
 import { useEffect, useState } from "react";
-
+import clientApi from "../../network/network";
+import { format } from "timeago.js";
+import { Link } from "react-router-dom";
 const Post = ({ post }) => {
     const [user, setUser] = useState({});
     const [likes, setLikes] = useState(post.like);
     const [isLiked, setIsLiked] = useState(false);
     useEffect(() => {
-        setUser(Users.find((u) => u.id === post.user_id));
-    }, []);
+        const fetchUser = async () => {
+            const res = await clientApi.get(`users?user_id=${post.user_id}`);
+            setUser(res.data);
+        };
+        fetchUser();
+    }, [post.user_id]);
     const likeHandler = () => {
         setLikes(isLiked ? likes - 1 : likes + 1);
         setIsLiked(!isLiked);
@@ -22,15 +27,19 @@ const Post = ({ post }) => {
             <div className="postWrapper">
                 <div className="postTop">
                     <div className="postTopLeft">
-                        <img
-                            src={
-                                user?.profilePicture ? user?.profilePicture : userProfilePlaceholder
-                            }
-                            alt="postuser"
-                            className="postProfileImg"
-                        />
+                        <Link to={`/profile/${user.username}`}>
+                            <img
+                                src={
+                                    user?.profilePicture
+                                        ? user?.profilePicture
+                                        : userProfilePlaceholder
+                                }
+                                alt="postuser"
+                                className="postProfileImg"
+                            />
+                        </Link>
                         <span className="postUsername">{user?.username}</span>
-                        <span className="postDate">{post.date}</span>
+                        <span className="postDate">{format(post.createdAt)}</span>
                     </div>
                     <div className="postTopRight">
                         <MoreVert />
@@ -38,7 +47,7 @@ const Post = ({ post }) => {
                 </div>
                 <div className="postCenter">
                     {post?.description && <p className="postText">{post?.description}</p>}
-                    {post?.photo && <img src={post?.photo} className="postImg" alt="post" />}
+                    {post?.img && <img src={post?.img} className="postImg" alt="post" />}
                 </div>
                 <div className="postBottom">
                     <div className="postBottomLeft">
