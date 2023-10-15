@@ -3,14 +3,16 @@ import userProfilePlaceholder from "../../assets/userprofile.svg";
 import likeImg from "../../assets/like.png";
 import heartImg from "../../assets/heart.png";
 import { MoreVert } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import clientApi from "../../network/network";
 import { format } from "timeago.js";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 const Post = ({ post }) => {
     const [user, setUser] = useState({});
-    const [likes, setLikes] = useState(post.like);
+    const [likes, setLikes] = useState(post.likes.length);
     const [isLiked, setIsLiked] = useState(false);
+    const { user: currentUser } = useContext(AuthContext);
     useEffect(() => {
         const fetchUser = async () => {
             const res = await clientApi.get(`users?user_id=${post.user_id}`);
@@ -18,9 +20,17 @@ const Post = ({ post }) => {
         };
         fetchUser();
     }, [post.user_id]);
-    const likeHandler = () => {
-        setLikes(isLiked ? likes - 1 : likes + 1);
-        setIsLiked(!isLiked);
+    useEffect(() => {
+        setIsLiked(post.likes.includes(currentUser._id));
+    }, [currentUser._id, post.likes]);
+    const likeHandler = async () => {
+        try {
+            await clientApi.put(`/posts/${post._id}/like`, { user_id: currentUser._id });
+            setLikes(isLiked ? likes - 1 : likes + 1);
+            setIsLiked(!isLiked);
+        } catch (error) {
+            console.log(error);
+        }
     };
     return (
         <div className="post">

@@ -4,16 +4,16 @@ import "./login.css";
 import { loginCall } from "../../apiCalls";
 import { AuthContext } from "../../context/AuthContext";
 import { CircularProgress } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Login = () => {
     const email = useRef();
     const pass = useRef();
     const { user, isFetching, error, dispatch } = useContext(AuthContext);
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         loginCall({ email: email.current.value, password: pass.current.value }, dispatch);
     };
-    console.log(user);
     return (
         <div className="login">
             <div className="loginWrapper">
@@ -50,9 +50,13 @@ const Login = () => {
                             )}
                         </button>
                         <span className="loginForgot">Forgot Password?</span>
-                        <button disabled={isFetching} type="button" className="loginRegisterButton">
+                        <Link
+                            to="/register"
+                            disabled={isFetching}
+                            type="button"
+                            className="loginRegisterButton">
                             Create a New Account
-                        </button>
+                        </Link>
                     </form>
                 </div>
             </div>

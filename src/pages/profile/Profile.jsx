@@ -18,7 +18,7 @@ const Profile = () => {
             setUser(res.data);
         };
         fetchUser();
-    }, []);
+    }, [params.username]);
     return (
         <>
             <Topbar />

@@ -4,10 +4,50 @@ import addImg from "../../assets/ad.png";
 import userPlaceholderImg from "../../assets/userprofile.svg";
 import { Users } from "../../dummyData";
 import Online from "../online/Online";
+import { useContext, useEffect, useState } from "react";
+import clientApi from "../../network/network";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { Add } from "@mui/icons-material";
 const Rightbar = ({ user }) => {
+    const { user: currentUser } = useContext(AuthContext);
+    const [friends, setFriends] = useState([]);
+    const [followed, setFollowed] = useState(false);
+
+    useEffect(() => {
+        setFollowed(currentUser.following.includes(user?._id));
+    }, [currentUser, user?._id]);
+    useEffect(() => {
+        const getFriends = async () => {
+            try {
+                const friendsList = await clientApi.get("/users/friends/" + user._id);
+                setFriends(friendsList.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        if (user?._id) {
+            getFriends();
+        }
+    }, [user?._id]);
+
+    const followHandler = async () => {
+        try {
+            if (followed) {
+                await clientApi.put("/users/" + user._id + "/unfollow", {
+                    user_id: currentUser._id,
+                });
+                setFollowed(false);
+            } else {
+                await clientApi.put("/users/" + user._id + "/follow", { user_id: currentUser._id });
+                setFollowed(true);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const HomeRightbar = () => (
         <>
-            {" "}
             <div className="birthdayContainer">
                 <img src={giftImg} alt="gift" className="birthdayImg" />
                 <span className="birthdayText">
@@ -25,6 +65,11 @@ const Rightbar = ({ user }) => {
     );
     const ProfileRightbar = () => (
         <>
+            {user.username !== currentUser.username && (
+                <button onClick={followHandler} className="rightbarFollowButton">
+                    {followed ? "Unfollow" : "Follow"} {!followed && <Add />}
+                </button>
+            )}
             <h4 className="rightbarTitle">User information</h4>
             <div className="rightbarInfo">
                 <div className="rightbarInfoItem">
@@ -48,26 +93,25 @@ const Rightbar = ({ user }) => {
             </div>
             <h4 className="rightbarTitle">User friends</h4>
             <div className="rightbarFollowings">
-                <div className="rightbarFollowing">
-                    <img src={userPlaceholderImg} alt="" className="rightbarFollowingImg" />
-                    <span className="rightbarFollowingName">John Carter</span>
-                </div>
-                <div className="rightbarFollowing">
-                    <img src={userPlaceholderImg} alt="" className="rightbarFollowingImg" />
-                    <span className="rightbarFollowingName">John Carter</span>
-                </div>
-                <div className="rightbarFollowing">
-                    <img src={userPlaceholderImg} alt="" className="rightbarFollowingImg" />
-                    <span className="rightbarFollowingName">John Carter</span>
-                </div>
-                <div className="rightbarFollowing">
-                    <img src={userPlaceholderImg} alt="" className="rightbarFollowingImg" />
-                    <span className="rightbarFollowingName">John Carter</span>
-                </div>
-                <div className="rightbarFollowing">
-                    <img src={userPlaceholderImg} alt="" className="rightbarFollowingImg" />
-                    <span className="rightbarFollowingName">John Carter</span>
-                </div>
+                {friends.map((friend) => (
+                    <Link
+                        style={{ textDecoration: "none", color: "inherit" }}
+                        key={"friendsItem" + friend._id}
+                        to={"/profile/" + friend.username}>
+                        <div className="rightbarFollowing">
+                            <img
+                                src={
+                                    friend.profilePicture
+                                        ? friend.profilePicture
+                                        : userPlaceholderImg
+                                }
+                                alt=""
+                                className="rightbarFollowingImg"
+                            />
+                            <span className="rightbarFollowingName">{friend.username}</span>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </>
     );

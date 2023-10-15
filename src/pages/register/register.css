@@ -66,6 +66,10 @@
 .registerLoginButton {
     width: fit-content;
     padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     align-self: center;
     height: 50px;
     border-radius: 10px;
@@ -75,4 +79,5 @@
     font-size: 20px;
     font-weight: 500;
     cursor: pointer;
+    text-decoration: none;
 }

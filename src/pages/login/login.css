@@ -69,6 +69,10 @@
     width: fit-content;
     padding: 5px 20px;
     align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     height: 50px;
     border-radius: 10px;
     border: none;
@@ -77,4 +81,5 @@
     font-size: 20px;
     font-weight: 500;
     cursor: pointer;
+    text-decoration: none;
 }
