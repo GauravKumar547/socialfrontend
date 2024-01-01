@@ -8,8 +8,14 @@
 }
 .chatMenuInput{
     width: 90%;
-    padding: 10px 0;
+
+    padding: 10px;
     border: none;
+    border-bottom: 1px solid gray;
+}
+.chatMenuInput:active, .chatMenuInput:focus{
+    border: none;
+    outline: none;
     border-bottom: 1px solid gray;
 }
 .chatBox{

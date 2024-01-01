@@ -1,4 +1,4 @@
-import { Chat, Notifications, Person, Search } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import "./topbar.css";
 import userProfilePlaceholder from "../../assets/userprofile.svg";
 import { Link } from "react-router-dom";
@@ -18,17 +18,17 @@ const Topbar = () => {
                     <Search className="searchicon" />
                     <input
                         type="text"
-                        placeholder="Search ffor friend, post or video"
+                        placeholder="Search for friend or post "
                         className="searchInput"
                     />
                 </div>
             </div>
             <div className="topbarRight">
-                <div className="topbarLinks">
+                {/* <div className="topbarLinks">
                     <span className="topbarLink">Homepage</span>
                     <span className="topbarLink">Timeline</span>
-                </div>
-                <div className="topbarIcons">
+                </div> */}
+                {/* <div className="topbarIcons">
                     <div className="topbarIconItem">
                         <Person />
                         <span className="topbarIconBadge">1</span>
@@ -41,7 +41,7 @@ const Topbar = () => {
                         <Notifications />
                         <span className="topbarIconBadge">1</span>
                     </div>
-                </div>
+                </div> */}
                 <Link to={`/profile/${user?.username}`}>
                     <img
                         src={user?.profilePicture ? user?.profilePicture : userProfilePlaceholder}

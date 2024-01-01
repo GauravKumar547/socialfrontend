@@ -8,10 +8,11 @@ import clientApi from "../../network/network";
 import { format } from "timeago.js";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-const Post = ({ post }) => {
+const Post = ({ post, removeThePost }) => {
     const [user, setUser] = useState({});
     const [likes, setLikes] = useState(post.likes.length);
     const [isLiked, setIsLiked] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
     const { user: currentUser } = useContext(AuthContext);
     useEffect(() => {
         const fetchUser = async () => {
@@ -30,6 +31,16 @@ const Post = ({ post }) => {
             setIsLiked(!isLiked);
         } catch (error) {
             console.log(error);
+        }
+    };
+    const deleteHandler = async () => {
+        try {
+            await clientApi.delete(`/posts/${post._id}`, { data: { user_id: currentUser._id } });
+            removeThePost();
+            setShowDialog(false);
+        } catch (error) {
+            console.log(error);
+            setShowDialog(false);
         }
     };
     return (
@@ -52,7 +63,14 @@ const Post = ({ post }) => {
                         <span className="postDate">{format(post.createdAt)}</span>
                     </div>
                     <div className="postTopRight">
-                        <MoreVert />
+                        <MoreVert className="vertBtn" onClick={() => setShowDialog(!showDialog)} />
+                        {showDialog && (
+                            <div className="postOptionDialog">
+                                <button onClick={() => deleteHandler()} className="deletePost">
+                                    Delete
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="postCenter">

@@ -7,6 +7,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import clientApi from "../../network/network";
 import { io } from "socket.io-client";
+import userProfilePlaceholder from "../../assets/userprofile.svg";
 const Messenger = () => {
     const { user } = useContext(AuthContext);
     const [conversations, setConversations] = useState([]);
@@ -15,7 +16,9 @@ const Messenger = () => {
     const [newMessage, setNewMessage] = useState("");
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [inputVal, setInputVal] = useState("");
     const scrollRef = useRef(null);
+    const [friends, setFriends] = useState([]);
     const socket = useRef();
     useEffect(() => {
         socket.current = io("ws://localhost:8080");
@@ -27,7 +30,19 @@ const Messenger = () => {
             });
         });
     }, []);
-
+    useEffect(() => {
+        const getFriends = async () => {
+            try {
+                const friendsList = await clientApi.get("/users/friends/" + user._id);
+                setFriends(friendsList.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        if (user?._id) {
+            getFriends();
+        }
+    }, [user?._id]);
     useEffect(() => {
         if (arrivalMessage && currentChat?.members.includes(arrivalMessage.sender)) {
             setMessages((prev) => [...prev, arrivalMessage]);
@@ -92,24 +107,76 @@ const Messenger = () => {
     useEffect(() => {
         scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+    const createNewConversationHandler = async (receiver) => {
+        try {
+            const res = await clientApi.post("/conversations/", {
+                receiver_id: receiver._id,
+                sender_id: user._id,
+            });
+            setConversations([...conversations, res.data]);
+            setCurrentChat(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
             <Topbar />
             <div className="messenger">
                 <div className="chatMenu">
                     <div className="chatMenuWrapper">
-                        <input
-                            type="text"
-                            placeholder="Search for friends"
-                            className="chatMenuInput"
-                        />
+                        <div>
+                            <input
+                                value={inputVal}
+                                onChange={(ev) => setInputVal(ev.target.value)}
+                                type="text"
+                                placeholder="Search for friends"
+                                className="chatMenuInput"
+                            />
+                        </div>
                         {conversations.map((conversation) => (
                             <div
                                 onClick={() => setCurrentChat(conversation)}
                                 key={"conversation" + conversation._id}>
-                                <Conversation conversation={conversation} currentUser={user} />
+                                <Conversation
+                                    searchedVal={inputVal}
+                                    conversation={conversation}
+                                    currentUser={user}
+                                />
                             </div>
                         ))}
+                        <ul className="rightbarFriendList">
+                            {inputVal.length > 0 &&
+                                friends.map((userval) =>
+                                    userval?.username.toLowerCase().includes(inputVal) &&
+                                    conversations.findIndex(
+                                        (val) =>
+                                            val.members.findIndex(
+                                                (memberid) => memberid == userval._id
+                                            ) >= 0
+                                    ) < 0 ? (
+                                        <div
+                                            onClick={() => {
+                                                createNewConversationHandler(userval);
+                                            }}
+                                            key={"friendlistval" + userval._id}
+                                            className="conversation">
+                                            <img
+                                                src={
+                                                    userval?.profilePicture
+                                                        ? userval?.profilePicture
+                                                        : userProfilePlaceholder
+                                                }
+                                                alt="conversation profile"
+                                                className="conversationImg"
+                                            />
+                                            <span className="conversationName">
+                                                {userval?.username}
+                                            </span>
+                                        </div>
+                                    ) : null
+                                )}
+                        </ul>
                     </div>
                 </div>
                 <div className="chatBox">

@@ -1,7 +1,10 @@
 .rightbarFriend {
     display: flex;
+    cursor: pointer;
     align-items: center;
     margin-bottom: 15px;
+    text-decoration: none;
+    color: black;
 }
 .rightbarProfileImgContainer {
     margin-right: 10px;

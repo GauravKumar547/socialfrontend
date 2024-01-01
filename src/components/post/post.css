@@ -72,3 +72,29 @@
 .postCommentText:hover {
     border-color: gray;
 }
+
+.postTopRight{
+    position: relative;
+}
+.vertBtn{
+    cursor: pointer;
+}
+.postTopRight,.postTopRight button {
+    border: none ;
+    background: none;
+}
+.postOptionDialog{
+    position: absolute;
+    top: 1.5rem;
+    right: 0rem;
+    border: solid 1px rgba(179, 176, 176, 0.5);
+    border-radius: 5px;
+    background: white;
+}
+.deletePost{
+    padding: 0.4rem;
+}
+.deletePost:hover{
+    cursor: pointer;
+    background: rgba(179, 176, 176, 0.5);
+}

@@ -1,8 +1,5 @@
 import "./rightbar.css";
-import giftImg from "../../assets/gift.png";
-import addImg from "../../assets/ad.png";
 import userPlaceholderImg from "../../assets/userprofile.svg";
-import { Users } from "../../dummyData";
 import Online from "../online/Online";
 import { useContext, useEffect, useState } from "react";
 import clientApi from "../../network/network";
@@ -20,16 +17,18 @@ const Rightbar = ({ user }) => {
     useEffect(() => {
         const getFriends = async () => {
             try {
-                const friendsList = await clientApi.get("/users/friends/" + user._id);
+                const friendsList = await clientApi.get(
+                    "/users/friends/" + (user ? user._id : currentUser._id)
+                );
                 setFriends(friendsList.data);
             } catch (error) {
                 console.log(error);
             }
         };
-        if (user?._id) {
+        if (user?._id || currentUser?._id) {
             getFriends();
         }
-    }, [user?._id]);
+    }, [currentUser, user]);
 
     const followHandler = async () => {
         try {
@@ -48,16 +47,16 @@ const Rightbar = ({ user }) => {
     };
     const HomeRightbar = () => (
         <>
-            <div className="birthdayContainer">
+            {/* <div className="birthdayContainer">
                 <img src={giftImg} alt="gift" className="birthdayImg" />
                 <span className="birthdayText">
                     <b>Pola Foster</b> and <b>3 other friends</b> have a birthday today.
                 </span>
             </div>
-            <img src={addImg} alt="ad" className="rightbarAd" />
-            <h4 className="rightbarTitle">Online Friends</h4>
+            <img src={addImg} alt="ad" className="rightbarAd" /> */}
+            <h4 className="rightbarTitle">Friends</h4>
             <ul className="rightbarFriendList">
-                {Users.map((user) => (
+                {friends.map((user) => (
                     <Online key={user.id} user={user} />
                 ))}
             </ul>

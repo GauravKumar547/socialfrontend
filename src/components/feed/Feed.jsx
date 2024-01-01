@@ -25,7 +25,13 @@ const Feed = ({ username }) => {
             <div className="feedWrapper">
                 {(!username || username === user.username) && <Share />}
                 {posts.map((post, idx) => (
-                    <Post key={"feedpost" + idx} post={post} />
+                    <Post
+                        removeThePost={() => {
+                            setPosts(posts.filter((val) => post._id != val._id));
+                        }}
+                        key={"feedpost" + idx}
+                        post={post}
+                    />
                 ))}
             </div>
         </div>
