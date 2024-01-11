@@ -1,11 +1,13 @@
-import { Search } from "@mui/icons-material";
+import { Search, Settings } from "@mui/icons-material";
 import "./topbar.css";
 import userProfilePlaceholder from "../../assets/userprofile.svg";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import SettingModal from "../settingModal/SettingModal";
 const Topbar = () => {
     const { user } = useContext(AuthContext);
+    const [showSettings, setShowSettings] = useState(true);
     return (
         <div className="topbarContainer">
             <div className="topbarLeft">
@@ -28,8 +30,8 @@ const Topbar = () => {
                     <span className="topbarLink">Homepage</span>
                     <span className="topbarLink">Timeline</span>
                 </div> */}
-                {/* <div className="topbarIcons">
-                    <div className="topbarIconItem">
+                <div className="topbarIcons">
+                    {/* <div className="topbarIconItem">
                         <Person />
                         <span className="topbarIconBadge">1</span>
                     </div>
@@ -40,8 +42,11 @@ const Topbar = () => {
                     <div className="topbarIconItem">
                         <Notifications />
                         <span className="topbarIconBadge">1</span>
+                    </div> */}
+                    <div onClick={() => setShowSettings(!showSettings)} className="topbarIconItem">
+                        <Settings />
                     </div>
-                </div> */}
+                </div>
                 <Link to={`/profile/${user?.username}`}>
                     <img
                         src={user?.profilePicture ? user?.profilePicture : userProfilePlaceholder}
@@ -50,6 +55,7 @@ const Topbar = () => {
                     />
                 </Link>
             </div>
+            {showSettings && <SettingModal user={user} onClose={() => setShowSettings(false)} />}
         </div>
     );
 };

@@ -56,8 +56,8 @@ const Rightbar = ({ user }) => {
             <img src={addImg} alt="ad" className="rightbarAd" /> */}
             <h4 className="rightbarTitle">Friends</h4>
             <ul className="rightbarFriendList">
-                {friends.map((user) => (
-                    <Online key={user.id} user={user} />
+                {friends.map((user, index) => (
+                    <Online key={user.id + "_" + index + "_" + "online"} user={user} />
                 ))}
             </ul>
         </>
@@ -76,7 +76,7 @@ const Rightbar = ({ user }) => {
                     <span className="rightbarInfoValue">{user.city}</span>
                 </div>
                 <div className="rightbarInfoItem">
-                    <span className="rightbarInfoKey">From:</span>
+                    <span className="rightbarInfoKey">Country:</span>
                     <span className="rightbarInfoValue">{user.from}</span>
                 </div>
                 <div className="rightbarInfoItem">
