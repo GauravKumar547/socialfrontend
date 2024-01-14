@@ -2,30 +2,99 @@ import { Close, Edit } from "@mui/icons-material";
 import userProfilePlaceholder from "../../assets/userprofile.svg";
 import userCoverPlaceholder from "../../assets/noCover.png";
 import "./settingModal.css";
-import { useEffect, useRef, useState } from "react";
+import storage from "../../firebase";
+import { getDownloadURL, ref, uploadBytesResumable, deleteObject } from "firebase/storage";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import clientApi from "../../network/network";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 const SettingModal = ({ user, onClose }) => {
     const [profilePicInput, setProfilePicInput] = useState(null);
     const [coverPicInput, setCoverPicInput] = useState(null);
-    const usernameRef = useRef(null);
+    const [username, setUsername] = useState(user?.username);
     const cityRef = useRef(null);
     const fromRef = useRef(null);
-    const relationRef = useRef(null);
     const descRef = useRef(null);
+    const [relationship, setRelationship] = useState(user?.relationship);
     const [userData, setUserData] = useState({});
-    useEffect(() => {
-        const fetchUser = async () => {
+    const { dispatch } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const fetchUser = useCallback(
+        async (contextUpdate) => {
             const res = await clientApi.get(`/users?user_id=${user._id}`);
-            setUserData(res.data);
-            if (relationRef?.current) {
-                relationRef.current.value = res.data.relationship;
+            if (contextUpdate) {
+                dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+                localStorage.setItem("user", JSON.stringify(res.data));
             }
-        };
+            setUserData(res.data);
+            if (res.data.relationship) {
+                setRelationship(res.data.relationship);
+            }
+        },
+        [dispatch, user]
+    );
+
+    useEffect(() => {
         if (user?._id) {
             fetchUser();
         }
-    }, [user]);
-    const updateProfile = () => {};
+    }, [fetchUser, user]);
+    const uploadToFirebase = async (file) => {
+        const storageRef = ref(storage, `/files/${user._id}/${file.name}`);
+        const uploadTask = await uploadBytesResumable(storageRef, file);
+        const url = await getDownloadURL(uploadTask.ref);
+        return url;
+    };
+    const updateProfile = async () => {
+        const data = { user_id: user._id };
+        if (username && username.length > 3) {
+            data["username"] = username;
+        }
+        if (descRef.current?.value && descRef.current?.value.length > 0) {
+            data["description"] = descRef.current.value;
+        }
+        if (cityRef.current?.value && cityRef.current?.value.length > 0) {
+            data["city"] = cityRef.current.value;
+        }
+        if (fromRef.current?.value && fromRef.current?.value.length > 0) {
+            data["from"] = fromRef.current.value;
+        }
+        data["relationship"] = relationship == 2 || relationship == 3 ? relationship : 1;
+        if (profilePicInput) {
+            data["profilePicture"] = await uploadToFirebase(profilePicInput);
+        }
+        if (coverPicInput) {
+            data["coverPicture"] = await uploadToFirebase(coverPicInput);
+        }
+        try {
+            if (userData.profilePicture && profilePicInput) {
+                const fileProfileRef = ref(storage, userData.profilePicture);
+                await deleteObject(fileProfileRef);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            try {
+                if (userData.coverPicture && coverPicInput) {
+                    const fileCoverRef = ref(storage, userData.coverPicture);
+                    await deleteObject(fileCoverRef);
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                try {
+                    await clientApi.put(`/users/${user._id}`, data);
+                } catch (error) {
+                    console.log("update failed");
+                } finally {
+                    fetchUser(true);
+                    onClose();
+                    navigate("/");
+                }
+            }
+        }
+    };
     return (
         <div className="setting-modal">
             <div className="overlay"></div>
@@ -94,9 +163,15 @@ const SettingModal = ({ user, onClose }) => {
                         <input
                             type="text"
                             placeholder="your username"
-                            ref={usernameRef}
                             id="username"
-                            defaultValue={userData?.username ?? ""}
+                            onChange={(ev) => {
+                                if (ev.target.value.includes(" ")) {
+                                    toast.error("Spaces in username not allowed");
+                                } else {
+                                    setUsername(ev.target.value);
+                                }
+                            }}
+                            value={username}
                         />
                     </div>
                     <div className="desc-container">
@@ -140,7 +215,10 @@ const SettingModal = ({ user, onClose }) => {
                             <input
                                 name="relationship"
                                 type="radio"
-                                ref={relationRef}
+                                onChange={() => {
+                                    setRelationship(1);
+                                }}
+                                defaultChecked={relationship == 1}
                                 value={1}
                                 id="single"
                             />
@@ -148,23 +226,34 @@ const SettingModal = ({ user, onClose }) => {
                             <input
                                 name="relationship"
                                 type="radio"
-                                ref={relationRef}
+                                onChange={() => {
+                                    setRelationship(2);
+                                }}
                                 id="married"
+                                defaultChecked={relationship == 2}
                                 value={2}
                             />
                             <label htmlFor="divorced">Divorced:</label>
                             <input
                                 name="relationship"
                                 type="radio"
-                                ref={relationRef}
+                                onChange={() => {
+                                    setRelationship(3);
+                                }}
                                 id="divorced"
+                                defaultChecked={relationship == 3}
                                 value={3}
                             />
                         </div>
                     </div>
 
                     <div className="update-btn-container">
-                        <button onClick={() => updateProfile()} className="update-btn">
+                        <button
+                            onClick={(ev) => {
+                                ev.preventDefault();
+                                updateProfile();
+                            }}
+                            className="update-btn">
                             Update
                         </button>
                     </div>

@@ -7,7 +7,7 @@ import { AuthContext } from "../../context/AuthContext";
 import SettingModal from "../settingModal/SettingModal";
 const Topbar = () => {
     const { user } = useContext(AuthContext);
-    const [showSettings, setShowSettings] = useState(true);
+    const [showSettings, setShowSettings] = useState(false);
     return (
         <div className="topbarContainer">
             <div className="topbarLeft">

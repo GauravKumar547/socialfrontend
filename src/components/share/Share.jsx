@@ -26,7 +26,7 @@ const Share = () => {
         };
         try {
             if (file) {
-                const storageRef = ref(storage, `/files/${user._id}/${file.name}}`);
+                const storageRef = ref(storage, `/files/${user._id}/${file.name}`);
                 const uploadTask = await uploadBytesResumable(storageRef, file);
                 const url = await getDownloadURL(uploadTask.ref);
                 newPost.img = url;

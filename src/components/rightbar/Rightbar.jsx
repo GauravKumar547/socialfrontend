@@ -18,7 +18,7 @@ const Rightbar = ({ user }) => {
         const getFriends = async () => {
             try {
                 const friendsList = await clientApi.get(
-                    "/users/friends/" + (user ? user._id : currentUser._id)
+                    "/users/friends/" + ((user && user._id) ?? currentUser._id)
                 );
                 setFriends(friendsList.data);
             } catch (error) {
