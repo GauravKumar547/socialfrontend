@@ -1,5 +1,4 @@
 .sidebar {
-    flex: 3;
     height: calc(100vh - 50px);
     overflow-y: auto;
     position: sticky;
@@ -23,6 +22,19 @@
 }
 .sidebarWrapper {
     padding: 20px;
+    display: flex;
+    height: calc(100vh - 100px);
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+}
+.logoutBtn{
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(158, 158, 158, 0.678);
+    color: blue;
+    font-weight: bold;
+    border-radius: 0.4rem;
+    cursor: pointer;
 }
 .sidebarList {
     padding: 0;
@@ -52,4 +64,50 @@
     padding: 0;
     margin: 0;
     list-style: none;
+}
+.sidebarContainer{
+    position: relative;
+    z-index: 10000;
+    flex: 2.5;
+}
+.menubar{
+    display: none;
+    color: white;
+    position: fixed;
+    top: 3.5rem;
+    left: 0.5rem;
+}
+.menu-icon{
+    border-radius: 100%;
+    z-index: 10000;
+    background: #1877f2;
+    padding: 0.25rem;
+    box-shadow: 1px 1px 12px 5px #1877f2;
+}
+@media screen and (max-width: 768px) {
+    .sidebar{
+        display: none;
+    }
+    .sidebar.show{
+        display: flex;
+        gap: 0.25rem;
+        min-width: 8rem;
+        align-items: start;
+        justify-content: stretch;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .sidebarContainer{
+        flex: none;
+    }
+    .menubar{
+        display: block;
+    }
+    .menubar.show{
+        left: 8rem;
+    }
+    .menubar.show .menu-icon{
+        background: #188ff2
+    }
 }

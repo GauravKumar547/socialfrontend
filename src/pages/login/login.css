@@ -83,3 +83,24 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+@media screen and (max-width: 768px) {
+    .login {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 2rem;
+    }
+    .loginWrapper {
+        width: 90%;
+        height: 60%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .loginLeft{
+        text-align: center;
+    }
+    .loginBox {
+        height: 300px;
+        max-width: 100%;
+    }
+}

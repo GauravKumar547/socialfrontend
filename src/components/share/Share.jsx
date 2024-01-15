@@ -1,6 +1,6 @@
 import "./share.css";
 import userProfilePlaceholder from "../../assets/userprofile.svg";
-import { Cancel, EmojiEmotions, Label, PermMedia, Room } from "@mui/icons-material";
+import { Cancel, PermMedia } from "@mui/icons-material";
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import clientApi from "../../network/network";
@@ -85,7 +85,7 @@ const Share = () => {
                                 id="file"
                             />
                         </label>
-                        <div className="shareOption">
+                        {/* <div className="shareOption">
                             <Label htmlColor="blue" className="shareIcon" />
                             <span className="shareOptionText">Tag</span>
                         </div>
@@ -96,7 +96,7 @@ const Share = () => {
                         <div className="shareOption">
                             <EmojiEmotions htmlColor="goldenrod" className="shareIcon" />
                             <span className="shareOptionText">Feelings</span>
-                        </div>
+                        </div> */}
                     </div>
                     <button disabled={isLoading} type="submit" className="shareButton">
                         {isLoading ? <CircularProgress size={13} color="inherit" /> : "Share"}

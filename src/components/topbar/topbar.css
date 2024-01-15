@@ -3,13 +3,14 @@
     width: 100%;
     background-color: #1877f2;
     display: flex;
+    gap: 5px;
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 999;
 }
 .topbarLeft {
-    flex: 3;
+    flex: 2.5;
 }
 .logo {
     font-size: 24px;
@@ -28,21 +29,50 @@
     background-color: white;
     border-radius: 30px;
     display: flex;
+    padding-right: 0.7rem;
     align-items: center;
+    justify-content: space-between;
 }
 .searchicon {
     font-size: 20px !important;
     margin-left: 10px;
 }
+.searchDialog{
+    position: absolute;
+    z-index: 999;
+    padding: 0.85rem 0.85rem 0;
+    background: white;
+    border-radius: 1rem;
+    top: 60px;
+    color: gray;
+    left: 50vw;
+    transform: translateX(-50%);
+    max-width: 95vw;
+    border: 1px solid rgb(192, 192, 192);
+    min-height: fit-content;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    min-width: 300px;
+}
+.searchbutton{
+    width: 100%;
+    background: #1877f2;
+    color: white;
+    cursor: pointer;
+    padding: 0.4rem;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+}
 .searchInput {
-    width: 70%;
+    flex: 1;
     border: none;
+    width: 100%;
 }
 .searchInput:focus {
     outline: none;
 }
 .topbarRight {
-    flex: 4;
+    flex: 2.5;
     display: flex;
     align-items: center;
     justify-content: end;
@@ -83,4 +113,17 @@
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .logo{
+        font-size: 20px;
+        margin-left: 0.5rem;
+    }
+    .topbarRight{
+        padding-right: 0.75rem;
+    }
+    .searchbar{
+        width: 50vw;
+    }
 }

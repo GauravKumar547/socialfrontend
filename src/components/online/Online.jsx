@@ -1,10 +1,17 @@
 import "./online.css";
 import userProfilePlaceholder from "../../assets/userprofile.svg";
 import { Link } from "react-router-dom";
-const Online = ({ user }) => {
+const Online = ({ user, emptyState }) => {
     return (
         <li key={user._id + "_friend"}>
-            <Link to={`/profile/${user.username}`} className="rightbarFriend">
+            <Link
+                onClick={() => {
+                    if (emptyState) {
+                        emptyState();
+                    }
+                }}
+                to={`/profile/${user.username}`}
+                className="rightbarFriend">
                 <div className="rightbarProfileImgContainer">
                     <img
                         src={user?.profilePicture ? user?.profilePicture : userProfilePlaceholder}
