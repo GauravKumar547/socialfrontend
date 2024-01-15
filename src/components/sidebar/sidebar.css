@@ -69,6 +69,7 @@
     position: relative;
     z-index: 10000;
     flex: 2.5;
+    max-width: 320px;
 }
 .menubar{
     display: none;
