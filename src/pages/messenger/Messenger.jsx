@@ -1,7 +1,7 @@
 import "./messenger.css";
 import Topbar from "../../components/topbar/Topbar";
 import Conversation from "../../components/conversation/conversation";
-import Message from "../../components/message/message";
+import Message from "../../components/message/Message";
 import ChatOnline from "../../components/chatOnline/ChatOnline";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
