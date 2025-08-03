@@ -7,7 +7,7 @@ import clientApi from '@/network/network';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
 import likeImg from '@/assets/like.png';
 import heartImg from '@/assets/heart.png';
-import type { IPost, IUser, IApiResponse } from '@/types';
+import type { IPost, IUser } from '@/types';
 
 interface IPostProps {
     post: IPost;
@@ -20,12 +20,16 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const { user: currentUser } = useContext(AuthContext);
-
     useEffect(() => {
         const fetchUser = async (): Promise<void> => {
             try {
-                const res = await clientApi.get<IApiResponse<IUser>>(`users?user_id=${post.user_id}`);
-                setPostUser(res.data);
+                if (typeof post.user_id === 'string') {
+                    const res = await clientApi.get<IUser>(`users?user_id=${post.user_id}`);
+                    setPostUser(res);
+                }
+                else {
+                    setPostUser(post.user_id);
+                }
             } catch (error) {
                 console.error('Error fetching user:', error);
             }
@@ -84,7 +88,9 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
                                 className="w-8 h-8 rounded-full object-cover bg-gray-light"
                             />
                         </Link>
-                        <span className="text-[15px] font-medium mx-[10px]">{postUser.username}</span>
+                        <Link to={`/profile/${postUser.username}`} className="no-underline text-black">
+                            <span className="text-[15px] font-medium mx-[10px]">{postUser.username}</span>
+                        </Link>
                         <span className="text-xs">{format(post.createdAt)}</span>
                     </div>
                     <div className="relative">
@@ -106,7 +112,7 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
                 </div>
                 <div className="mt-5 mb-0">
                     {post.description && <p className="mb-5">{post.description}</p>}
-                    {post.img && <img src={post.img} className="w-full max-h-[500px] object-contain mb-5" alt="post content" />}
+                    {post.image && <img src={post.image} className="w-full max-h-[500px] object-contain mb-5" alt="post content" />}
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">

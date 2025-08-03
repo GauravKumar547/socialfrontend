@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
+import Post from '@/components/Post';
+import Share from '@/components/Share';
 import { AuthContext } from '@/context/AuthContext';
 import clientApi from '@/network/network';
-import Post from './Post';
-import Share from './Share';
-import type { IPost, IApiResponse } from '@/types';
+import type { IPost } from '@/types';
 
 interface IFeedProps {
     username?: string;
@@ -16,12 +16,12 @@ const Feed: React.FC<IFeedProps> = ({ username }) => {
     useEffect(() => {
         const fetchPosts = async (): Promise<void> => {
             try {
-                const res = username
-                    ? await clientApi.get<IApiResponse<IPost[]>>(`posts/profile/${username}`)
-                    : await clientApi.get<IApiResponse<IPost[]>>(`posts/timeline/${user?._id}`);
+                const postsRes = username
+                    ? await clientApi.get<IPost[]>(`posts/profile/${username}`)
+                    : await clientApi.get<IPost[]>(`posts/timeline`);
 
                 setPosts(
-                    res.data.sort((p1: IPost, p2: IPost) => {
+                    postsRes.toSorted((p1: IPost, p2: IPost) => {
                         return new Date(p2.createdAt).getTime() - new Date(p1.createdAt).getTime();
                     })
                 );
@@ -38,7 +38,6 @@ const Feed: React.FC<IFeedProps> = ({ username }) => {
     const removeThePost = (postId: string): void => {
         setPosts(posts.filter((post) => post._id !== postId));
     };
-
     return (
         <div className={username ? "flex-[5.5] max-w-feed-profile mx-auto" : "flex-[5.5] max-w-feed"}>
             <div className="p-5">

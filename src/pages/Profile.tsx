@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Topbar from '@/components/Topbar';
 import Sidebar from '@/components/Sidebar';
-import Feed from '@/components/Feed';
 import Rightbar from '@/components/Rightbar';
+import Feed from '@/components/Feed';
 import { AuthContext } from '@/context/AuthContext';
 import clientApi from '@/network/network';
-import type { IUser, IApiResponse } from '@/types';
-import userProfilePlaceholder from '@/assets/userprofile.svg';
 import noCoverImg from '@/assets/noCover.png';
+import userProfilePlaceholder from '@/assets/userprofile.svg';
+import type { IUser } from '@/types';
 
 const Profile: React.FC = () => {
     const [user, setUser] = useState<IUser | null>(null);
@@ -24,9 +24,9 @@ const Profile: React.FC = () => {
             try {
                 setIsLoading(true);
                 setError(null);
-                const response = await clientApi.get<IApiResponse<IUser>>(`/users?username=${username}`);
-                if (response.data) {
-                    setUser(response.data);
+                const response = await clientApi.get<IUser>(`/users?username=${username}`);
+                if (response) {
+                    setUser(response);
                 } else {
                     setError('User not found');
                 }
@@ -144,10 +144,10 @@ const Profile: React.FC = () => {
 
                             {currentUser?._id !== user._id && (
                                 <div className="flex justify-center space-x-4">
-                                    <button className="btn-primary">
+                                    <button className="px-6 py-2 bg-[#1775ee] text-white rounded-md font-medium cursor-pointer hover:bg-[#166fe5] transition-colors duration-200">
                                         Follow
                                     </button>
-                                    <button className="btn-secondary">
+                                    <button className="px-6 py-2 bg-[#42b72a] text-white rounded-md font-medium cursor-pointer hover:bg-[#36a420] transition-colors duration-200">
                                         Message
                                     </button>
                                 </div>

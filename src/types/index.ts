@@ -9,7 +9,7 @@ export interface IUser {
     readonly description?: string;
     readonly city?: string;
     readonly from?: string;
-    readonly relationship?: RelationshipStatus;
+    readonly relationship?: number;
     readonly isAdmin: boolean;
     readonly createdAt: string;
     readonly updatedAt: string;
@@ -17,9 +17,9 @@ export interface IUser {
 
 export interface IPost {
     readonly _id: string;
-    readonly user_id: string;
+    readonly user_id: string | IUser;
     readonly description: string;
-    readonly img?: string;
+    readonly image?: string;
     readonly likes: readonly string[];
     readonly createdAt: string;
     readonly updatedAt: string;
@@ -86,7 +86,7 @@ export interface IUpdateUserData {
     readonly description?: string;
     readonly city?: string;
     readonly from?: string;
-    readonly relationship?: RelationshipStatus;
+    readonly relationship?: number;
     readonly profilePicture?: string;
     readonly coverPicture?: string;
 }
@@ -176,13 +176,14 @@ export interface IToastOptions {
     };
 }
 
-export type RelationshipStatus = 'single' | 'in-relationship' | 'married' | 'complicated';
 
 export type AuthActionType =
     | 'LOGIN_START'
     | 'LOGIN_SUCCESS'
     | 'LOGIN_FAILURE'
     | 'LOGOUT';
+
+export type RelationshipStatus = 'single' | 'in-relationship' | 'married' | 'complicated';
 
 export type FileType = 'image' | 'video' | 'document';
 

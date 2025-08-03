@@ -141,7 +141,7 @@ const Share: React.FC = () => {
                         </div>
 
                         <button
-                            className="border-none py-2 px-2 text-center rounded-[5px] text-[13px] min-w-[35px] bg-green-600 font-medium mr-5 cursor-pointer text-white disabled:cursor-not-allowed"
+                            className="border-none py-2 px-2 text-center rounded-[5px] text-[13px] min-w-[35px] bg-[#1775ee] font-medium mr-5 cursor-pointer text-white disabled:cursor-not-allowed hover:bg-[#166fe5] transition-colors duration-200"
                             type="submit"
                             disabled={isSubmitting || (!desc.trim() && !file)}
                         >

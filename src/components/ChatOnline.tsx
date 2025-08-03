@@ -18,9 +18,9 @@ const ChatOnline: React.FC<IChatOnlineProps> = ({ onlineUsers, currentUserId, se
             if (!currentUserId) return;
 
             try {
-                const res = await clientApi.get<IApiResponse<readonly IUser[]>>(`/users/friends/${currentUserId}`);
-                if (res.data) {
-                    setFriends(res.data);
+                const res = await clientApi.get<readonly IUser[]>(`/users/friends`);
+                if (res) {
+                    setFriends(res);
                 }
             } catch (error) {
                 console.error('Error fetching friends:', error);
@@ -41,11 +41,11 @@ const ChatOnline: React.FC<IChatOnlineProps> = ({ onlineUsers, currentUserId, se
         if (!currentUserId) return;
 
         try {
-            const res = await clientApi.get<IApiResponse<readonly IConversation[]>>(
-                `/conversation/find/${currentUserId}/${user._id}`
+            const res = await clientApi.get<readonly IConversation[]>(
+                `/conversations/find/${currentUserId}/${user._id}`
             );
-            if (res.data && res.data.length > 0 && res.data[0]) {
-                setCurrentChat(res.data[0]);
+            if (res && res.length > 0 && res[0]) {
+                setCurrentChat(res[0]);
             }
         } catch (error) {
             console.error('Error fetching conversation:', error);

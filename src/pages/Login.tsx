@@ -1,13 +1,15 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
-import { loginCall } from '@/apiCalls';
-import { AuthContext } from '@/context/AuthContext';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { loginCall } from '../apiCalls';
+import { AuthContext } from '../context/AuthContext';
 
 const Login: React.FC = () => {
     const email = useRef<HTMLInputElement>(null);
     const password = useRef<HTMLInputElement>(null);
     const { isFetching, dispatch } = useContext(AuthContext) || {};
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const handleClick = (e: React.FormEvent): void => {
         e.preventDefault();
@@ -37,16 +39,25 @@ const Login: React.FC = () => {
                             className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 focus:outline-none"
                             ref={email}
                         />
-                        <input
-                            placeholder="Password"
-                            type="password"
-                            required
-                            minLength={6}
-                            className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 focus:outline-none"
-                            ref={password}
-                        />
+                        <div className="relative">
+                            <input
+                                placeholder="Password"
+                                type={showPassword ? "text" : "password"}
+                                required
+                                minLength={6}
+                                className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 pr-12 focus:outline-none w-full"
+                                ref={password}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </button>
+                        </div>
                         <button
-                            className="h-[50px] rounded-[10px] border-none bg-[#1775ee] text-white text-xl font-medium cursor-pointer disabled:cursor-not-allowed"
+                            className="h-[50px] rounded-[10px] border-none bg-[#1775ee] text-white text-xl font-medium cursor-pointer disabled:cursor-not-allowed hover:bg-[#166fe5] transition-colors duration-200"
                             type="submit"
                             disabled={isFetching}
                         >
@@ -56,10 +67,15 @@ const Login: React.FC = () => {
                                 'Log In'
                             )}
                         </button>
-                        <span className="text-center text-[#1775ee]">Forgot Password?</span>
+                        <Link
+                            to="/forgot-password"
+                            className="text-center text-[#1775ee] hover:underline"
+                        >
+                            Forgot Password?
+                        </Link>
                         <Link
                             to="/register"
-                            className="w-fit py-[5px] px-5 self-center flex items-center justify-center text-center h-[50px] rounded-[10px] border-none bg-[#42b72a] text-white text-xl font-medium cursor-pointer no-underline"
+                            className="w-fit py-[5px] px-5 self-center flex items-center justify-center text-center h-[50px] rounded-[10px] border-none bg-[#42b72a] text-white text-xl font-medium cursor-pointer no-underline hover:bg-[#36a420] transition-colors duration-200"
                         >
                             Create a New Account
                         </Link>

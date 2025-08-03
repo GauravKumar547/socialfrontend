@@ -1,23 +1,36 @@
 import {
     RssFeed,
     Chat,
-    PlayCircleFilledOutlined,
-    Group,
-    Bookmark,
-    HelpOutline,
-    WorkOutline,
-    Event,
-    School,
     Menu,
 } from "@mui/icons-material";
 import CloseFriend from "./CloseFriend";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "@/context/AuthContext";
+import { Link } from "react-router-dom";
+import clientApi from "@/network/network";
 import type { IUser } from "@/types";
 
 const Sidebar = () => {
-    const { dispatch } = useContext(AuthContext);
+    const { dispatch, user } = useContext(AuthContext);
     const [showMobile, setShowMobile] = useState(false);
+    const [friends, setFriends] = useState<readonly IUser[]>([]);
+
+    useEffect(() => {
+        const getFriends = async (): Promise<void> => {
+            if (!user?._id) return;
+
+            try {
+                const res = await clientApi.get<IUser[]>(`/users/friends`);
+                if (res) {
+                    setFriends(res);
+                }
+            } catch (error) {
+                console.error('Error fetching friends:', error);
+            }
+        };
+
+        void getFriends();
+    }, [user]);
 
     const handleLogout = () => {
         if (dispatch) {
@@ -25,20 +38,6 @@ const Sidebar = () => {
         }
         localStorage.removeItem("user");
     };
-
-    const Users: IUser[] = [
-        {
-            _id: "1",
-            username: "Jane Doe",
-            email: "jane@example.com",
-            profilePicture: "",
-            followers: [],
-            following: [],
-            isAdmin: false,
-            createdAt: "2023-01-01T00:00:00.000Z",
-            updatedAt: "2023-01-01T00:00:00.000Z",
-        },
-    ];
 
     return (
         <>
@@ -52,51 +51,21 @@ const Sidebar = () => {
                         <div>
                             <ul className="p-0 m-0 list-none">
                                 <li className="flex items-center mb-5">
-                                    <RssFeed className="mr-4" />
-                                    <span>Feed</span>
+                                    <Link to="/" className="flex items-center no-underline text-black">
+                                        <RssFeed className="mr-4" />
+                                        <span>Feed</span>
+                                    </Link>
                                 </li>
                                 <li className="flex items-center mb-5">
-                                    <Chat className="mr-4" />
-                                    <span>Chats</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <PlayCircleFilledOutlined className="mr-4" />
-                                    <span>Videos</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <Group className="mr-4" />
-                                    <span>Groups</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <Bookmark className="mr-4" />
-                                    <span>Bookmarks</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <HelpOutline className="mr-4" />
-                                    <span>Questions</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <WorkOutline className="mr-4" />
-                                    <span>Jobs</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <Event className="mr-4" />
-                                    <span>Events</span>
-                                </li>
-                                <li className="flex items-center mb-5">
-                                    <School className="mr-4" />
-                                    <span>Courses</span>
+                                    <Link to="/messenger" className="flex items-center no-underline text-black">
+                                        <Chat className="mr-4" />
+                                        <span>Chats</span>
+                                    </Link>
                                 </li>
                             </ul>
-
-                            <button className="w-[150px] border-none p-[10px] rounded-[5px] font-medium">
-                                Show More
-                            </button>
-
                             <hr className="my-5" />
-
                             <ul className="p-0 m-0 list-none">
-                                {Users.map((u) => (
+                                {friends.map((u) => (
                                     <CloseFriend key={u._id} user={u} />
                                 ))}
                             </ul>
@@ -104,7 +73,7 @@ const Sidebar = () => {
 
                         <button
                             onClick={handleLogout}
-                            className="py-2 px-4 border border-gray-400 text-blue-600 font-bold rounded-md cursor-pointer"
+                            className="py-2 px-4 border border-gray-400 text-[#1775ee] font-bold rounded-md cursor-pointer hover:bg-gray-50 transition-colors duration-200"
                         >
                             Logout
                         </button>

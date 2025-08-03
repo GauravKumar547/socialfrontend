@@ -8,7 +8,7 @@ import clientApi from '@/network/network';
 import storage from '@/firebase';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
 import userCoverPlaceholder from '@/assets/noCover.png';
-import type { IUser, IApiResponse, RelationshipStatus } from '@/types';
+import type { IUser, IApiResponse } from '@/types';
 
 interface ISettingModalProps {
     user: IUser;
@@ -21,7 +21,7 @@ interface IUpdateUserData {
     description?: string;
     city?: string;
     from?: string;
-    relationship?: RelationshipStatus;
+    relationship?: number;
     profilePicture?: string;
     coverPicture?: string;
 }
@@ -35,7 +35,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
     const [profilePicInput, setProfilePicInput] = useState<File | null>(null);
     const [coverPicInput, setCoverPicInput] = useState<File | null>(null);
     const [username, setUsername] = useState<string>(user?.username || '');
-    const [relationship, setRelationship] = useState<RelationshipStatus>(user?.relationship || 'single');
+    const [relationship, setRelationship] = useState<number>(user?.relationship || 1);
     const [userData, setUserData] = useState<IUser | null>(null);
     const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
@@ -51,16 +51,16 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
             if (!user?._id) return;
 
             try {
-                const res = await clientApi.get<IApiResponse<IUser>>(`/users?user_id=${user._id}`);
 
+                const res = await clientApi.get<IUser>(`/users?user_id=${user._id}`);
                 if (contextUpdate) {
-                    dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
-                    localStorage.setItem('user', JSON.stringify(res.data));
+                    dispatch({ type: 'LOGIN_SUCCESS', payload: res });
+                    localStorage.setItem('user', JSON.stringify(res));
                 }
 
-                setUserData(res.data);
-                if (res.data.relationship) {
-                    setRelationship(res.data.relationship);
+                setUserData(res);
+                if (res.relationship) {
+                    setRelationship(res.relationship);
                 }
             } catch (error) {
                 console.error('Error fetching user:', error);
@@ -188,7 +188,6 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
             }
         }
     };
-
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Overlay */}
@@ -281,7 +280,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
                                 value={username}
                                 onChange={(ev) => handleUsernameChange(ev.target.value)}
                                 placeholder="Your username"
-                                className="input-field"
+                                className="input-field border-gray-300 border p-2 w-full rounded"
                                 minLength={4}
                                 required
                             />
@@ -298,7 +297,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
                                 rows={3}
                                 defaultValue={userData?.description || ''}
                                 placeholder="Tell us about yourself..."
-                                className="input-field resize-none"
+                                className="input-field resize-none border-gray-300 border p-2 w-full rounded"
                             />
                         </div>
 
@@ -314,7 +313,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
                                     id="city"
                                     defaultValue={userData?.city || ''}
                                     placeholder="Your city"
-                                    className="input-field"
+                                    className="input-field border-gray-300 border p-2 w-full rounded"
                                 />
                             </div>
                             <div>
@@ -327,7 +326,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
                                     id="from"
                                     defaultValue={userData?.from || ''}
                                     placeholder="Your country"
-                                    className="input-field"
+                                    className="input-field border-gray-300 border p-2 w-full rounded"
                                 />
                             </div>
                         </div>
@@ -339,10 +338,9 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
                             </label>
                             <div className="flex flex-wrap gap-4">
                                 {[
-                                    { value: 'single', label: 'Single' },
-                                    { value: 'married', label: 'Married' },
-                                    { value: 'in-relationship', label: 'In a relationship' },
-                                    { value: 'complicated', label: "It's complicated" }
+                                    { value: 1, label: 'Single' },
+                                    { value: 2, label: 'Married' },
+                                    { value: 3, label: 'In a relationship' },
                                 ].map((option) => (
                                     <label key={option.value} className="flex items-center space-x-2 cursor-pointer">
                                         <input
@@ -350,7 +348,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
                                             name="relationship"
                                             value={option.value}
                                             checked={relationship === option.value}
-                                            onChange={() => setRelationship(option.value as RelationshipStatus)}
+                                            onChange={() => setRelationship(option.value)}
                                             className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                                         />
                                         <span className="text-sm text-gray-700">{option.label}</span>

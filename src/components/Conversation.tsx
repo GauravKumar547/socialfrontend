@@ -22,9 +22,9 @@ const Conversation: React.FC<IConversationProps> = ({ conversation, currentUser,
 
             try {
                 setIsLoading(true);
-                const res = await clientApi.get<IApiResponse<IUser>>(`/users?user_id=${friendId}`);
-                if (res.data) {
-                    setUser(res.data);
+                const res = await clientApi.get<IUser>(`/users?user_id=${friendId}`);
+                if (res) {
+                    setUser(res);
                 }
             } catch (error) {
                 console.error('Error fetching user:', error);

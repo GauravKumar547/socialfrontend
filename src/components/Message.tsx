@@ -37,8 +37,8 @@ const Message: React.FC<IMessageProps> = ({ message, own }) => {
                 <div className={`flex flex-col space-y-1 ${own ? 'items-end' : 'items-start'}`}>
                     <div
                         className={`px-4 py-2 rounded-lg ${own
-                                ? 'bg-blue-500 text-white rounded-br-none'
-                                : 'bg-gray-200 text-gray-800 rounded-bl-none'
+                            ? 'bg-[#1775ee] text-white rounded-br-none'
+                            : 'bg-gray-200 text-gray-800 rounded-bl-none'
                             }`}
                     >
                         <p className="text-sm break-words">{message.text}</p>

@@ -17,8 +17,8 @@ const Topbar = () => {
     const searchHandler = async () => {
         if (searchInput.length <= 0) return;
         try {
-            const res = await clientApi.get(`/users/search/?q=${searchInput}`) as IApiResponse<IUser[]>;
-            setUsers(res.data);
+            const res = await clientApi.get<IUser[]>(`/users/search/?q=${searchInput}`);
+            setUsers(res);
         } catch (error) {
             console.log(error);
         }
@@ -81,11 +81,13 @@ const Topbar = () => {
                         <Settings onClick={() => setShowSettings(true)} />
                     </div>
                 </div>
-                <img
-                    src={user?.profilePicture ? user.profilePicture : userProfilePlaceholder}
-                    alt="profile"
-                    className="w-8 h-8 bg-gray-light rounded-full object-cover cursor-pointer"
-                />
+                <Link to={`/profile/${user?.username}`}>
+                    <img
+                        src={user?.profilePicture ? user.profilePicture : userProfilePlaceholder}
+                        alt="profile"
+                        className="w-8 h-8 bg-gray-light rounded-full object-cover cursor-pointer"
+                    />
+                </Link>
             </div>
             {showSettings && user && <SettingModal user={user} onClose={() => setShowSettings(false)} />}
         </div>

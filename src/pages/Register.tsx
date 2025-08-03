@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import clientApi from '@/network/network';
-import type { IRegisterCredentials, IApiResponse } from '@/types';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import clientApi from '../network/network';
+import type { IRegisterCredentials, IApiResponse } from '../types';
 
 const Register: React.FC = () => {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -11,6 +12,8 @@ const Register: React.FC = () => {
     const navigate = useNavigate();
     const [formErrors, setFormErrors] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -88,24 +91,42 @@ const Register: React.FC = () => {
                             className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 focus:outline-none"
                             autoComplete="email"
                         />
-                        <input
-                            type="password"
-                            required
-                            ref={passwordRef}
-                            minLength={6}
-                            placeholder="Password"
-                            className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 focus:outline-none"
-                            autoComplete="new-password"
-                        />
-                        <input
-                            type="password"
-                            required
-                            ref={confirmPasswordRef}
-                            minLength={6}
-                            placeholder="Password again"
-                            className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 focus:outline-none"
-                            autoComplete="new-password"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                ref={passwordRef}
+                                minLength={6}
+                                placeholder="Password"
+                                className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 pr-12 focus:outline-none w-full"
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </button>
+                        </div>
+                        <div className="relative">
+                            <input
+                                type={showConfirmPassword ? "text" : "password"}
+                                required
+                                ref={confirmPasswordRef}
+                                minLength={6}
+                                placeholder="Password again"
+                                className="h-[50px] rounded-[10px] border border-gray-400 text-lg pl-5 pr-12 focus:outline-none w-full"
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            >
+                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                            </button>
+                        </div>
 
                         {formErrors && (
                             <div className="text-red-600 text-sm text-center">
@@ -115,7 +136,7 @@ const Register: React.FC = () => {
 
                         <button
                             type="submit"
-                            className="h-[50px] rounded-[10px] border-none bg-[#1775ee] text-white text-xl font-medium cursor-pointer disabled:cursor-not-allowed"
+                            className="h-[50px] rounded-[10px] border-none bg-[#1775ee] text-white text-xl font-medium cursor-pointer disabled:cursor-not-allowed hover:bg-[#166fe5] transition-colors duration-200"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? 'Creating Account...' : 'Sign Up'}
@@ -125,7 +146,7 @@ const Register: React.FC = () => {
 
                         <Link
                             to="/login"
-                            className="w-fit py-[5px] px-5 self-center flex items-center justify-center text-center h-[50px] rounded-[10px] border-none bg-[#42b72a] text-white text-xl font-medium cursor-pointer no-underline"
+                            className="w-fit py-[5px] px-5 self-center flex items-center justify-center text-center h-[50px] rounded-[10px] border-none bg-[#42b72a] text-white text-xl font-medium cursor-pointer no-underline hover:bg-[#36a420] transition-colors duration-200"
                         >
                             Log into Account
                         </Link>

@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Add } from '@mui/icons-material';
-import { AuthContext } from '@/context/AuthContext';
-import clientApi from '@/network/network';
+import { Link } from 'react-router-dom';
 import Online from './Online';
+import { AuthContext } from '@/context/AuthContext';
+import { useSocket } from '@/context/SocketContext';
+import clientApi from '@/network/network';
 import userPlaceholderImg from '@/assets/userprofile.svg';
-import birthdayImg from '@/assets/gift.png';
-import adImg from '@/assets/ad.png';
 import type { IUser, IApiResponse } from '@/types';
 
 interface IRightbarProps {
@@ -15,15 +14,17 @@ interface IRightbarProps {
 
 const Rightbar: React.FC<IRightbarProps> = ({ user }) => {
     const [friends, setFriends] = useState<readonly IUser[]>([]);
+    const [onlineFriends, setOnlineFriends] = useState<readonly IUser[]>([]);
     const { user: currentUser } = useContext(AuthContext) || {};
+    const { onlineUsers } = useSocket();
 
     useEffect(() => {
         const getFriends = async (): Promise<void> => {
             if (user?._id) {
                 try {
-                    const friendList = await clientApi.get<IApiResponse<readonly IUser[]>>(`/users/friends/${user._id}`);
-                    if (friendList.data) {
-                        setFriends(friendList.data);
+                    const friendList = await clientApi.get<readonly IUser[]>(`/users/friends`);
+                    if (friendList) {
+                        setFriends(friendList);
                     }
                 } catch (error) {
                     console.error('Error fetching friends:', error);
@@ -34,37 +35,20 @@ const Rightbar: React.FC<IRightbarProps> = ({ user }) => {
         void getFriends();
     }, [user]);
 
+    useEffect(() => {
+        const filtered = friends.filter((friend) =>
+            onlineUsers.some((ou) => ou.userId === friend._id)
+        );
+        setOnlineFriends(filtered);
+    }, [friends, onlineUsers]);
+
     const HomeRightbar = (): JSX.Element => {
         return (
             <>
-                <div className="flex items-center">
-                    <img className="w-10 h-10 mr-[10px]" src={birthdayImg} alt="Gift" />
-                    <span className="font-light text-[15px]">
-                        <b>Pola Foster</b> and <b>3 other friends</b> have a birthday today.
-                    </span>
-                </div>
-                <img
-                    className="w-full rounded-[10px] my-[30px]"
-                    src={adImg}
-                    alt="Advertisement"
-                />
                 <h4 className="text-lg font-medium mb-[10px]">Online Friends</h4>
                 <ul className="m-0 p-0 list-none">
-                    {[...Array(8)].map((_, index) => (
-                        <Online
-                            key={index}
-                            user={{
-                                _id: `user-${index}`,
-                                username: `User ${index + 1}`,
-                                email: `user${index + 1}@example.com`,
-                                profilePicture: userPlaceholderImg,
-                                followers: [],
-                                following: [],
-                                isAdmin: false,
-                                createdAt: new Date().toISOString(),
-                                updatedAt: new Date().toISOString(),
-                            }}
-                        />
+                    {onlineFriends.map((friend) => (
+                        <Online key={friend._id} user={friend} />
                     ))}
                 </ul>
             </>
@@ -75,7 +59,7 @@ const Rightbar: React.FC<IRightbarProps> = ({ user }) => {
         return (
             <>
                 {user?.username !== currentUser?.username && (
-                    <button className="mt-[30px] mb-[10px] border-none bg-[#1872f2] text-white rounded-[5px] py-[5px] px-[10px] flex w-[90px] h-[34px] items-center justify-center text-center text-base font-medium cursor-pointer focus:outline-none">
+                    <button className="mt-[30px] mb-[10px] border-none bg-[#1775ee] text-white rounded-[5px] py-[5px] px-[10px] flex w-[90px] h-[34px] items-center justify-center text-center text-base font-medium cursor-pointer focus:outline-none hover:bg-[#166fe5] transition-colors duration-200">
                         <Add className="mr-1" />
                         Follow
                     </button>

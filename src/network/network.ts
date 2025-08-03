@@ -13,6 +13,7 @@ class ApiClient implements IApiClient {
             headers: {
                 'Content-Type': 'application/json',
             },
+            withCredentials: true,
         });
 
         this.setupInterceptors();
