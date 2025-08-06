@@ -28,7 +28,7 @@ export interface IPost {
 export interface IMessage {
     readonly _id: string;
     readonly conversationId: string;
-    readonly sender: string;
+    readonly sender_id: string;
     readonly text: string;
     readonly createdAt: string;
     readonly updatedAt: string;
@@ -42,8 +42,8 @@ export interface IConversation {
 }
 
 export interface IOnlineUser {
-    readonly userId: string;
-    readonly socketId: string;
+    readonly user_id: string;
+    readonly socket_id: string;
 }
 
 export interface ISocketMessage {
@@ -53,7 +53,7 @@ export interface ISocketMessage {
 }
 
 export interface IArrivingMessage {
-    readonly sender: string;
+    readonly sender_id: string;
     readonly text: string;
     readonly createdAt: Date;
 }

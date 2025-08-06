@@ -1,13 +1,14 @@
 import React from 'react';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
-import type { IMessage } from '@/types';
+import type { IMessage, IUser } from '@/types';
 
 interface IMessageProps {
     readonly message: IMessage;
     readonly own: boolean;
+    readonly user: IUser | null;
 }
 
-const Message: React.FC<IMessageProps> = ({ message, own }) => {
+const Message: React.FC<IMessageProps> = ({ message, own, user }) => {
     const formatTime = (date: string): string => {
         try {
             const messageDate = new Date(date);
@@ -29,7 +30,7 @@ const Message: React.FC<IMessageProps> = ({ message, own }) => {
                 {!own && (
                     <img
                         className="w-8 h-8 rounded-full object-cover"
-                        src={userProfilePlaceholder}
+                        src={user?.profilePicture || userProfilePlaceholder}
                         alt="User"
                     />
                 )}

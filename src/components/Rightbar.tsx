@@ -17,18 +17,15 @@ const Rightbar: React.FC<IRightbarProps> = ({ user }) => {
     const [onlineFriends, setOnlineFriends] = useState<readonly IUser[]>([]);
     const { user: currentUser } = useContext(AuthContext) || {};
     const { onlineUsers } = useSocket();
-
     useEffect(() => {
         const getFriends = async (): Promise<void> => {
-            if (user?._id) {
-                try {
-                    const friendList = await clientApi.get<readonly IUser[]>(`/users/friends`);
-                    if (friendList) {
-                        setFriends(friendList);
-                    }
-                } catch (error) {
-                    console.error('Error fetching friends:', error);
+            try {
+                const friendList = await clientApi.get<readonly IUser[]>(`/?users/friends${user?._id ? "/user_id=" + user._id : "/"}`);
+                if (friendList) {
+                    setFriends(friendList);
                 }
+            } catch (error) {
+                console.error('Error fetching friends:', error);
             }
         };
 
@@ -37,11 +34,10 @@ const Rightbar: React.FC<IRightbarProps> = ({ user }) => {
 
     useEffect(() => {
         const filtered = friends.filter((friend) =>
-            onlineUsers.some((ou) => ou.userId === friend._id)
+            onlineUsers.some((ou) => ou.user_id === friend._id)
         );
         setOnlineFriends(filtered);
     }, [friends, onlineUsers]);
-
     const HomeRightbar = (): JSX.Element => {
         return (
             <>

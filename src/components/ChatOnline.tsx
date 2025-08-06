@@ -7,9 +7,10 @@ interface IChatOnlineProps {
     onlineUsers: readonly IOnlineUser[];
     currentUserId?: string;
     setCurrentChat: (conversation: IConversation) => void;
+    setReceiver: (friend: IUser) => void;
 }
 
-const ChatOnline: React.FC<IChatOnlineProps> = ({ onlineUsers, currentUserId, setCurrentChat }) => {
+const ChatOnline: React.FC<IChatOnlineProps> = ({ onlineUsers, currentUserId, setCurrentChat, setReceiver }) => {
     const [friends, setFriends] = useState<readonly IUser[]>([]);
     const [onlineFriends, setOnlineFriends] = useState<readonly IUser[]>([]);
 
@@ -32,7 +33,7 @@ const ChatOnline: React.FC<IChatOnlineProps> = ({ onlineUsers, currentUserId, se
 
     useEffect(() => {
         const filtered = friends.filter((friend) =>
-            onlineUsers.some((ou) => ou.userId === friend._id)
+            onlineUsers.some((ou) => ou.user_id === friend._id)
         );
         setOnlineFriends(filtered);
     }, [friends, onlineUsers]);
@@ -42,10 +43,11 @@ const ChatOnline: React.FC<IChatOnlineProps> = ({ onlineUsers, currentUserId, se
 
         try {
             const res = await clientApi.get<readonly IConversation[]>(
-                `/conversations/find/${currentUserId}/${user._id}`
+                `/conversations/${currentUserId}/${user._id}`
             );
             if (res && res.length > 0 && res[0]) {
                 setCurrentChat(res[0]);
+                setReceiver(user);
             }
         } catch (error) {
             console.error('Error fetching conversation:', error);

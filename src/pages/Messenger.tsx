@@ -22,6 +22,7 @@ const Messenger: React.FC = () => {
     const [arrivalMessage, setArrivalMessage] = useState<IArrivingMessage | null>(null);
     const [inputVal, setInputVal] = useState<string>('');
     const [friends, setFriends] = useState<readonly IUser[]>([]);
+    const [receiver, setReceiver] = useState<IUser | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const { user } = useContext(AuthContext) || {};
@@ -31,7 +32,7 @@ const Messenger: React.FC = () => {
         if (socket) {
             socket.on('getMessage', (data: ISocketMessage) => {
                 setArrivalMessage({
-                    sender: data.sender_id,
+                    sender_id: data.sender_id,
                     text: data.text,
                     createdAt: new Date(),
                 });
@@ -57,11 +58,11 @@ const Messenger: React.FC = () => {
     }, [user]);
 
     useEffect(() => {
-        if (arrivalMessage && currentChat?.members.includes(arrivalMessage.sender)) {
+        if (arrivalMessage && currentChat?.members.includes(arrivalMessage.sender_id)) {
             const messageToAdd: IMessage = {
                 _id: `temp-${Date.now()}`,
                 conversationId: currentChat._id,
-                sender: arrivalMessage.sender,
+                sender_id: arrivalMessage.sender_id,
                 text: arrivalMessage.text,
                 createdAt: arrivalMessage.createdAt.toISOString(),
                 updatedAt: arrivalMessage.createdAt.toISOString(),
@@ -95,7 +96,7 @@ const Messenger: React.FC = () => {
 
             try {
                 const res = await clientApi.get<readonly IMessage[]>(
-                    `/message/${currentChat._id}`
+                    `/messages/${currentChat._id}`
                 );
                 if (res) {
                     setMessages(res);
@@ -119,7 +120,7 @@ const Messenger: React.FC = () => {
         const message = {
             sender: user._id,
             text: newMessage,
-            conversationId: currentChat._id,
+            conversation_id: currentChat._id,
         };
 
         const receiverId = currentChat.members.find((member) => member !== user._id);
@@ -132,9 +133,9 @@ const Messenger: React.FC = () => {
         }
 
         try {
-            const res = await clientApi.post<IApiResponse<IMessage>>('/message', message);
-            if (res.data) {
-                setMessages((prev) => [...prev, res.data!]);
+            const res = await clientApi.post<IMessage>('/messages', message);
+            if (res) {
+                setMessages((prev) => [...prev, res]);
                 setNewMessage('');
             }
         } catch (error) {
@@ -153,20 +154,21 @@ const Messenger: React.FC = () => {
         if (existingConversation) {
             // Load existing conversation
             setCurrentChat(existingConversation);
+            setReceiver(friend);
             setInputVal('');
             return;
         }
 
         // Create new conversation
         try {
-            const res = await clientApi.post<IApiResponse<IConversation>>('/conversations', {
-                sender_id: user._id,
+            const res = await clientApi.post<IConversation>('/conversations', {
                 receiver_id: friend._id,
             });
 
-            if (res.data) {
-                setConversations((prev) => [...prev, res.data!]);
-                setCurrentChat(res.data);
+            if (res) {
+                setConversations((prev) => [...prev, res!]);
+                setCurrentChat(res);
+                setReceiver(friend);
                 setInputVal('');
             }
         } catch (error) {
@@ -235,9 +237,10 @@ const Messenger: React.FC = () => {
                             <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
                                 {messages.map((m) => (
                                     <div key={m._id} ref={scrollRef}>
-                                        <Message message={m} own={m.sender === user?._id} />
+                                        <Message message={m} own={m.sender_id === user?._id} user={m.sender_id === user?._id ? user : receiver} />
                                     </div>
-                                ))}
+                                )
+                                )}
                             </div>
 
                             <div className="p-4 bg-white border-t border-gray-200">
@@ -280,6 +283,7 @@ const Messenger: React.FC = () => {
                             onlineUsers={onlineUsers}
                             currentUserId={user?._id || ''}
                             setCurrentChat={setCurrentChat}
+                            setReceiver={setReceiver}
                         />
                     </div>
                 </div>
