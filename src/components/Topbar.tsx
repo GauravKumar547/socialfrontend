@@ -6,7 +6,8 @@ import { AuthContext } from "@/context/AuthContext";
 import SettingModal from "./SettingModal";
 import Online from "./Online";
 import clientApi from "@/network/network";
-import type { IUser, IApiResponse } from "@/types";
+import type { IUser } from "@/types";
+import CloseFriend from "./CloseFriend";
 
 const Topbar = () => {
     const { user } = useContext(AuthContext);
@@ -17,13 +18,12 @@ const Topbar = () => {
     const searchHandler = async () => {
         if (searchInput.length <= 0) return;
         try {
-            const res = await clientApi.get<IUser[]>(`/users/search/?q=${searchInput}`);
-            setUsers(res);
+            const res = await clientApi.get<{ users: IUser[] }>(`/users/search/?q=${searchInput}`);
+            setUsers(res.users);
         } catch (error) {
             console.log(error);
         }
     };
-
     return (
         <div className="h-[50px] w-full bg-[#1877f2] flex gap-[5px] items-center sticky top-0 z-[999]">
             <div className="flex-[2.5]">
@@ -58,7 +58,7 @@ const Topbar = () => {
                     <div className="absolute z-[999] py-3 px-3 bg-white rounded-2xl top-[60px] text-gray-500 left-1/2 transform -translate-x-1/2 max-w-[95vw] border border-[#c0c0c0] min-h-fit max-h-[calc(100vh-150px)] overflow-y-auto min-w-[300px]">
                         {users.length > 0 ? (
                             users.map((u) => (
-                                <Online key={u._id} user={u} />
+                                <CloseFriend key={u._id} user={u} />
                             ))
                         ) : (
                             <div>No users found</div>

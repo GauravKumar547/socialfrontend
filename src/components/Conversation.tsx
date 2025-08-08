@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import clientApi from '@/network/network';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
-import type { IConversation, IUser, IApiResponse } from '@/types';
+import type { IConversation, IUser } from '@/types';
 
 interface IConversationProps {
     conversation: IConversation;

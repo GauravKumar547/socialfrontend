@@ -1,3 +1,5 @@
+import type { AxiosResponse } from "axios";
+
 export interface IUser {
     readonly _id: string;
     readonly username: string;
@@ -89,12 +91,6 @@ export interface IUpdateUserData {
     readonly relationship?: number;
     readonly profilePicture?: string;
     readonly coverPicture?: string;
-}
-
-export interface IApiResponse<T> {
-    readonly success: boolean;
-    readonly data: T;
-    readonly message?: string;
 }
 
 export interface IApiError {

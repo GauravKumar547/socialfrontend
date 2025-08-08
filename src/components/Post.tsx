@@ -116,18 +116,15 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                        <img
+                        <button
                             onClick={likeHandler}
-                            src={likeImg}
-                            alt="like"
-                            className="w-6 h-6 mr-[5px] ml-[2px] cursor-pointer"
-                        />
-                        <img
-                            onClick={likeHandler}
-                            src={heartImg}
-                            alt="heart"
-                            className="w-6 h-6 mr-[5px] ml-[2px] cursor-pointer"
-                        />
+                        >
+                            <img
+                                src={isLiked ? heartImg : likeImg}
+                                alt="like"
+                                className="w-6 h-6 mr-[5px] ml-[2px] cursor-pointer"
+                            />
+                        </button>
                         <span className="text-[15px]">{likes} people like it</span>
                     </div>
                     <div>

@@ -3,7 +3,6 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import clientApi from '../network/network';
-import type { IApiResponse } from '../types';
 
 const ResetPassword: React.FC = () => {
     const password = useRef<HTMLInputElement>(null);
@@ -51,7 +50,7 @@ const ResetPassword: React.FC = () => {
         setMessage('');
 
         try {
-            await clientApi.post<IApiResponse<unknown>>('/auth/reset-password', {
+            await clientApi.post<unknown>('/auth/reset-password', {
                 token: token,
                 newPassword: password.current.value
             });

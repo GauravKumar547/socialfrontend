@@ -6,7 +6,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { useSocket } from '@/context/SocketContext';
 import clientApi from '@/network/network';
 import userPlaceholderImg from '@/assets/userprofile.svg';
-import type { IUser, IApiResponse } from '@/types';
+import type { IUser } from '@/types';
 
 interface IRightbarProps {
     user?: IUser;
@@ -20,7 +20,7 @@ const Rightbar: React.FC<IRightbarProps> = ({ user }) => {
     useEffect(() => {
         const getFriends = async (): Promise<void> => {
             try {
-                const friendList = await clientApi.get<readonly IUser[]>(`/?users/friends${user?._id ? "/user_id=" + user._id : "/"}`);
+                const friendList = await clientApi.get<readonly IUser[]>(`/users/friends${user?._id ? "/?user_id=" + user._id : "/"}`);
                 if (friendList) {
                     setFriends(friendList);
                 }

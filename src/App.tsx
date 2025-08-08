@@ -10,6 +10,7 @@ import Register from '@/pages/Register';
 import Messenger from '@/pages/Messenger';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
+import Users from './pages/Users';
 
 const App: React.FC = () => {
     const { user } = useContext(AuthContext);
@@ -21,6 +22,7 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/" element={user ? <Home /> : <Login />} />
                         <Route path="/profile/:username" element={<Profile />} />
+                        <Route path="/users" element={user ? <Users /> : <Login />} />
                         <Route
                             path="/register"
                             element={user ? <Navigate to="/" replace /> : <Register />}

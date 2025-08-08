@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import clientApi from '../network/network';
-import type { IRegisterCredentials, IApiResponse } from '../types';
+import type { IRegisterCredentials } from '../types';
 
 const Register: React.FC = () => {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -54,7 +54,7 @@ const Register: React.FC = () => {
         };
 
         try {
-            await clientApi.post<IApiResponse<unknown>>('/auth/register', user as unknown as Record<string, unknown>);
+            await clientApi.post<unknown>('/auth/register', user as unknown as Record<string, unknown>);
             navigate('/login');
         } catch (error) {
             console.error('Registration error:', error);

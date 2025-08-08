@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import clientApi from '../network/network';
-import type { IApiResponse } from '../types';
 
 const ForgotPassword: React.FC = () => {
     const email = useRef<HTMLInputElement>(null);
@@ -18,7 +17,7 @@ const ForgotPassword: React.FC = () => {
         setMessage('');
 
         try {
-            await clientApi.post<IApiResponse<unknown>>('/auth/forgot-password', {
+            await clientApi.post<unknown>('/auth/forgot-password', {
                 email: email.current.value
             });
             setIsSuccess(true);

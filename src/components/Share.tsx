@@ -10,10 +10,13 @@ import { AuthContext } from '@/context/AuthContext';
 import clientApi from '@/network/network';
 import storage from '@/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import type { IApiResponse, IPost } from '@/types';
+import type { IPost } from '@/types';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
 
-const Share: React.FC = () => {
+interface IShareProps {
+    onPostSuccessFull: () => Promise<void>;
+}
+const Share: React.FC<IShareProps> = ({ onPostSuccessFull }) => {
     const { user } = useContext(AuthContext) || {};
     const [file, setFile] = useState<File | null>(null);
     const [desc, setDesc] = useState<string>('');
@@ -52,10 +55,11 @@ const Share: React.FC = () => {
                     async () => {
                         try {
                             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                            const postWithImage = { ...newPost, img: downloadURL };
-                            await clientApi.post<IApiResponse<IPost>>('/posts', postWithImage);
+                            const postWithImage = { ...newPost, image: downloadURL };
+                            await clientApi.post<IPost>('/posts', postWithImage);
                             setDesc('');
                             setFile(null);
+                            onPostSuccessFull();
                         } catch (error) {
                             console.error('Error uploading post:', error);
                         } finally {
@@ -69,8 +73,9 @@ const Share: React.FC = () => {
             }
         } else {
             try {
-                await clientApi.post<IApiResponse<IPost>>('/posts', newPost);
+                await clientApi.post<IPost>('/posts', newPost);
                 setDesc('');
+                onPostSuccessFull();
             } catch (error) {
                 console.error('Error creating post:', error);
             } finally {
@@ -126,18 +131,6 @@ const Share: React.FC = () => {
                                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                                 />
                             </label>
-                            <div className="flex items-center mr-4 cursor-pointer">
-                                <Label className="text-lg mr-1" style={{ color: 'blue' }} />
-                                <span className="text-sm font-medium">Tag</span>
-                            </div>
-                            <div className="flex items-center mr-4 cursor-pointer">
-                                <Room className="text-lg mr-1" style={{ color: 'green' }} />
-                                <span className="text-sm font-medium">Location</span>
-                            </div>
-                            <div className="flex items-center mr-4 cursor-pointer">
-                                <EmojiEmotions className="text-lg mr-1" style={{ color: 'goldenrod' }} />
-                                <span className="text-sm font-medium">Feelings</span>
-                            </div>
                         </div>
 
                         <button

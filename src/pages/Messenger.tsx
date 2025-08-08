@@ -9,7 +9,6 @@ import type {
     IConversation,
     IMessage,
     IUser,
-    IApiResponse,
     ISocketMessage,
     IArrivingMessage
 } from '@/types';

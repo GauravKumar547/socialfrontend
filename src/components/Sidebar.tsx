@@ -2,6 +2,7 @@ import {
     RssFeed,
     Chat,
     Menu,
+    Group,
 } from "@mui/icons-material";
 import CloseFriend from "./CloseFriend";
 import { useContext, useState, useEffect } from "react";
@@ -47,7 +48,7 @@ const Sidebar = () => {
                     ${showMobile ? "flex flex-col gap-1 min-w-32 items-start justify-stretch absolute top-0 left-0" : ""}
                     md:block ${!showMobile ? "hidden md:block" : ""}`}
                 >
-                    <div className="p-5 flex h-[calc(100vh-100px)] flex-col items-stretch justify-between">
+                    <div className="p-5 flex h-[calc(100vh-50px)] flex-col items-stretch justify-between">
                         <div>
                             <ul className="p-0 m-0 list-none">
                                 <li className="flex items-center mb-5">
@@ -60,6 +61,12 @@ const Sidebar = () => {
                                     <Link to="/messenger" className="flex items-center no-underline text-black">
                                         <Chat className="mr-4" />
                                         <span>Chats</span>
+                                    </Link>
+                                </li>
+                                <li className="flex items-center mb-5">
+                                    <Link to="/users" className="flex items-center no-underline text-black">
+                                        <Group className="mr-4" />
+                                        <span>All Users</span>
                                     </Link>
                                 </li>
                             </ul>

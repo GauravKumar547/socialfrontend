@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import clientApi from '@/network/network';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
-import type { IUser, IOnlineUser, IConversation, IApiResponse } from '@/types';
+import type { IUser, IOnlineUser, IConversation } from '@/types';
 
 interface IChatOnlineProps {
     onlineUsers: readonly IOnlineUser[];

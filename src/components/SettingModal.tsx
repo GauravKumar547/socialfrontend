@@ -8,7 +8,7 @@ import clientApi from '@/network/network';
 import storage from '@/firebase';
 import userProfilePlaceholder from '@/assets/userprofile.svg';
 import userCoverPlaceholder from '@/assets/noCover.png';
-import type { IUser, IApiResponse } from '@/types';
+import type { IUser } from '@/types';
 
 interface ISettingModalProps {
     user: IUser;
@@ -140,7 +140,7 @@ const SettingModal: React.FC<ISettingModalProps> = ({ user, onClose }) => {
             }
 
             // Update user data
-            await clientApi.put<IApiResponse<IUser>>(
+            await clientApi.put<IUser>(
                 `/users/${user._id}`,
                 data as unknown as Record<string, unknown>
             );

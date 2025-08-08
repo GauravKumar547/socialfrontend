@@ -13,22 +13,22 @@ const Feed: React.FC<IFeedProps> = ({ username }) => {
     const [posts, setPosts] = useState<readonly IPost[]>([]);
     const { user } = useContext(AuthContext);
 
-    useEffect(() => {
-        const fetchPosts = async (): Promise<void> => {
-            try {
-                const postsRes = username
-                    ? await clientApi.get<IPost[]>(`posts/profile/${username}`)
-                    : await clientApi.get<IPost[]>(`posts/timeline`);
+    const fetchPosts = async (): Promise<void> => {
+        try {
+            const postsRes = username
+                ? await clientApi.get<IPost[]>(`posts/profile/${username}`)
+                : await clientApi.get<IPost[]>(`posts/timeline`);
 
-                setPosts(
-                    postsRes.toSorted((p1: IPost, p2: IPost) => {
-                        return new Date(p2.createdAt).getTime() - new Date(p1.createdAt).getTime();
-                    })
-                );
-            } catch (error) {
-                console.error('Error fetching posts:', error);
-            }
-        };
+            setPosts(
+                postsRes.toSorted((p1: IPost, p2: IPost) => {
+                    return new Date(p2.createdAt).getTime() - new Date(p1.createdAt).getTime();
+                })
+            );
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    };
+    useEffect(() => {
 
         if (user?._id || username) {
             fetchPosts();
@@ -41,7 +41,7 @@ const Feed: React.FC<IFeedProps> = ({ username }) => {
     return (
         <div className={username ? "flex-[5.5] max-w-feed-profile mx-auto" : "flex-[5.5] max-w-feed"}>
             <div className="p-5">
-                {(!username || username === user?.username) && <Share />}
+                {(!username || username === user?.username) && <Share onPostSuccessFull={fetchPosts} />}
                 {posts.map((post, idx) => (
                     <Post
                         removeThePost={() => removeThePost(post._id)}
