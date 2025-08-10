@@ -32,7 +32,12 @@ export const SocketProvider: React.FC<ISocketProviderProps> = ({ children }) => 
 
     useEffect(() => {
         if (!socket.current) {
-            socket.current = io(SOCKET_URL);
+            socket.current = io(SOCKET_URL, {
+                withCredentials: true,
+                transports: ['websocket', 'polling'],
+                path: '/socket.io',
+                autoConnect: true,
+            });
 
             socket.current.on('connect', () => {
                 setIsConnected(true);
