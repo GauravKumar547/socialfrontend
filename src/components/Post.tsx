@@ -75,7 +75,6 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
     if (!postUser) {
         return <div className="w-full rounded-[10px] my-[30px] shadow-card">Loading...</div>;
     }
-
     return (
         <div className="w-full rounded-[10px] my-[30px] shadow-card">
             <div className="p-[10px]">
@@ -94,18 +93,18 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
                         <span className="text-xs">{format(post.createdAt)}</span>
                     </div>
                     <div className="relative">
-                        <MoreVert
+                        {currentUser && (currentUser._id === post.user_id || currentUser._id === (post.user_id as IUser)._id) && (<MoreVert
                             onClick={() => setShowDialog(!showDialog)}
                             className="cursor-pointer"
-                        />
-                        {showDialog && currentUser && currentUser._id === post.user_id && (
+                        />)}
+                        {showDialog && (
                             <div className="absolute top-6 right-0 border border-gray-300 border-opacity-50 rounded-[5px] bg-white">
-                                <div
+                                <button
                                     onClick={deleteHandler}
                                     className="p-2 hover:cursor-pointer hover:bg-gray-300 hover:bg-opacity-50"
                                 >
                                     Delete
-                                </div>
+                                </button>
                             </div>
                         )}
                     </div>
@@ -126,11 +125,6 @@ const Post: React.FC<IPostProps> = ({ post, removeThePost }) => {
                             />
                         </button>
                         <span className="text-[15px]">{likes} people like it</span>
-                    </div>
-                    <div>
-                        <span className="text-[15px] cursor-pointer border-b border-dashed border-gray-400 border-opacity-50 hover:border-gray-600">
-                            0 comments
-                        </span>
                     </div>
                 </div>
             </div>
