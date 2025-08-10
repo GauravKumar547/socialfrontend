@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { io, type Socket } from 'socket.io-client';
 import { AuthContext } from './AuthContext';
 import type { IOnlineUser } from '@/types';
+import { SOCKET_URL } from '@/utils/constants';
 
 interface ISocketContextValue {
     readonly socket: Socket | null;
@@ -31,7 +32,7 @@ export const SocketProvider: React.FC<ISocketProviderProps> = ({ children }) => 
 
     useEffect(() => {
         if (!socket.current) {
-            socket.current = io('ws://localhost:8800');
+            socket.current = io(SOCKET_URL);
 
             socket.current.on('connect', () => {
                 setIsConnected(true);
