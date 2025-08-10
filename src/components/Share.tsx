@@ -1,9 +1,6 @@
 import React, { useContext, useState } from 'react';
 import {
     PermMedia,
-    Label,
-    Room,
-    EmojiEmotions,
     Cancel
 } from '@mui/icons-material';
 import { AuthContext } from '@/context/AuthContext';

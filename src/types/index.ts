@@ -1,4 +1,3 @@
-import type { AxiosResponse } from "axios";
 
 export interface IUser {
     readonly _id: string;

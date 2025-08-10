@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import SettingModal from "./SettingModal";
-import Online from "./Online";
 import clientApi from "@/network/network";
 import type { IUser } from "@/types";
 import CloseFriend from "./CloseFriend";
