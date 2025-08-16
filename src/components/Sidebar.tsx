@@ -7,7 +7,7 @@ import {
 import CloseFriend from "./CloseFriend";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "@/context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import clientApi from "@/network/network";
 import type { IUser } from "@/types";
 
@@ -15,6 +15,7 @@ const Sidebar = () => {
     const { dispatch, user } = useContext(AuthContext);
     const [showMobile, setShowMobile] = useState(false);
     const [friends, setFriends] = useState<readonly IUser[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getFriends = async (): Promise<void> => {
@@ -38,6 +39,9 @@ const Sidebar = () => {
             dispatch({ type: "LOGOUT" });
         }
         localStorage.removeItem("user");
+        setTimeout(() => {
+            navigate("/login");
+        }, 500);
     };
 
     return (
